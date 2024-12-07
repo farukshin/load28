@@ -1,17 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 )
 
 func (app *application) getVersion() {
-	fmt.Printf("loader28 %s\n", app.version)
+	fmt.Printf("load28 %s\n", app.version)
 }
 
 func (app *application) parseArgs() error {
@@ -32,85 +28,51 @@ func initArgs(str string, env string) (string, error) {
 	if errh != nil {
 		val = os.Getenv(env)
 		if val == "" {
-			return "", fmt.Errorf("Не задан параметр %s. Задайте параметр %s в команде запуска или иницализируйте переменную окружения %s", str, str, env)
+			return "", fmt.Errorf("Не задан параметр %s. Задайте параметр %s в команде запуска или инициализируйте переменную окружения %s", str, str, env)
 		}
 	}
 	return val, nil
 }
+func (app *application) init() {
+	login, err := initArgs("--login", "LOAD28_USER")
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	app.login = login
+	pwd, err := initArgs("--password", "LOAD28_PWD")
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	app.pwd = pwd
+
+	hideUnavailablePrograms, err := getArgs("--hideUnavailablePrograms")
+	if err == nil && hideUnavailablePrograms == "true" {
+		app.hideUnavailablePrograms = true
+	}
+}
 
 func (app *application) run() {
 
-	user, err := initArgs("--user", "LOADER28_USER")
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-	password, err := initArgs("--password", "LOADER28_PASSWORD")
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-	debug, _ := initArgs("--debug", "LOADER28_PASSWORD")
+	app.init()
 
 	command, err := getCommand()
 	if err != nil {
 		app.help_home()
 		return
 	}
+
 	if command == "list" {
-		app.list(user, password, debug)
+		app.list()
 	} else if command == "get" {
-		app.get(user, password, debug)
+		app.get()
 	} else {
 		app.help_home()
 	}
 }
 
-func (app *application) list(login string, password string, debug string) {
-
-	client := &http.Client{
-		Jar: app.cookie,
-	}
-
-	type loginP struct {
-		Login       string `json:"login"`
-		Password    string `json:"password"`
-		ServiceNick string `json:"serviceNick"`
-	}
-
-	type ticket struct {
-		Ticket string `json:"ticket"`
-	}
-
-	ticketUrl := "https://login.1c.ru/rest/public/ticket/get"
-	req, _ := http.NewRequest("POST", ticketUrl, nil)
-	postBody, err := json.Marshal(
-		loginP{login, password, "Platform83"})
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-	req.SetBasicAuth(login, password)
-	req.Header.Set("Content-Type", "application/json")
-	buf := bytes.NewBuffer(postBody)
-	req, err = http.NewRequest("POST", ticketUrl, buf)
-
-	resp, _ := client.Do(req)
-
-	var ticketData ticket
-	b, _ := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		app.errorLog.Println(err)
-	}
-	json.Unmarshal(b, &ticketData)
-
-	aa := fmt.Sprintf("https://login.1c.ru//ticket/auth?token=%s", ticketData.Ticket)
-	println(aa)
-	return
-
-}
-
-func (app *application) get(user string, password string, debug string) {
+func (app *application) get() {
 	fmt.Println("get")
 }
 
@@ -147,10 +109,10 @@ func getArgs(a1 string) (string, error) {
 	return "", errors.New("Не найдено флага " + a1)
 }
 func (app *application) help_home() {
-	fmt.Println(`Приложение: loader28\n
+	fmt.Println(`Приложение: load28\n
     Загрузка дистрибутивов с сайта releases.1c.ru
 	
-Строка запуска: parser1c [КОМАНДА] [ОПЦИИ]
+Строка запуска: load28 [КОМАНДА] [ОПЦИИ]
 КОМАНДА:
     list - вывод списка доступных дистрибутивов
     get - загрузка дистрибутива
@@ -158,10 +120,10 @@ func (app *application) help_home() {
 ОПЦИИ:
     -h --help - вызов справки
     -v --version - версия приложения
-    --user - пользователь PostgreSQL (либо env PG_USER)
-    --password - пароль PostgreSQL (либо env PG_PASSWORD)
+    --login - пользователь портала releases.1c.ru (либо env LOAD28_USER)
+    --pwd - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
 
 Пример запуска:
-    ./loader28 list --user=user1c --password=pass1c
-    ./loader28 get --user=user1c --password=pass1c`)
+    ./load28 list --user=user1c --password=pass1c
+    ./load28 get --user=user1c --password=pass1c`)
 }

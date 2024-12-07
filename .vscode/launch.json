@@ -7,7 +7,7 @@
         {
             "name": "Доступные релизы",
             "type": "go",
-            "args": ["list", "--user=user", "--password=password"],
+            "args": ["list", "--login=login", "--password=password"],
         }
     ]
 }
