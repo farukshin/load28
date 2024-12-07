@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 )
 
@@ -47,11 +51,74 @@ func (app *application) run() {
 		return
 	}
 	debug, _ := initArgs("--debug", "LOADER28_PASSWORD")
-	println(
-		"user:", user,
-		"password:", password,
-		"debug:", debug,
-	)
+
+	command, err := getCommand()
+	if err != nil {
+		app.help_home()
+		return
+	}
+	if command == "list" {
+		app.list(user, password, debug)
+	} else if command == "get" {
+		app.get(user, password, debug)
+	} else {
+		app.help_home()
+	}
+}
+
+func (app *application) list(login string, password string, debug string) {
+
+	client := &http.Client{
+		Jar: app.cookie,
+	}
+
+	type loginP struct {
+		Login       string `json:"login"`
+		Password    string `json:"password"`
+		ServiceNick string `json:"serviceNick"`
+	}
+
+	type ticket struct {
+		Ticket string `json:"ticket"`
+	}
+
+	ticketUrl := "https://login.1c.ru/rest/public/ticket/get"
+	req, _ := http.NewRequest("POST", ticketUrl, nil)
+	postBody, err := json.Marshal(
+		loginP{login, password, "Platform83"})
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	req.SetBasicAuth(login, password)
+	req.Header.Set("Content-Type", "application/json")
+	buf := bytes.NewBuffer(postBody)
+	req, err = http.NewRequest("POST", ticketUrl, buf)
+
+	resp, _ := client.Do(req)
+
+	var ticketData ticket
+	b, _ := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+	json.Unmarshal(b, &ticketData)
+
+	aa := fmt.Sprintf("https://login.1c.ru//ticket/auth?token=%s", ticketData.Ticket)
+	println(aa)
+	return
+
+}
+
+func (app *application) get(user string, password string, debug string) {
+	fmt.Println("get")
+}
+
+func getCommand() (string, error) {
+	if len(os.Args) < 2 {
+		return "", errors.New("Не задана команда")
+	}
+	return os.Args[1], nil
 }
 
 func isArgs(a1 string) bool {
