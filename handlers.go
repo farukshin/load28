@@ -7,7 +7,7 @@ import (
 )
 
 func (app *application) getVersion() {
-	fmt.Printf("downloader1c %s\n", app.version)
+	fmt.Printf("loader28 %s\n", app.version)
 }
 
 func (app *application) parseArgs() error {
@@ -36,17 +36,17 @@ func initArgs(str string, env string) (string, error) {
 
 func (app *application) run() {
 
-	user, err := initArgs("--user", "DOWNLOADER1C_USER")
+	user, err := initArgs("--user", "LOADER28_USER")
 	if err != nil {
 		app.errorLog.Println(err)
 		return
 	}
-	password, err := initArgs("--password", "DOWNLOADER1C_PASSWORD")
+	password, err := initArgs("--password", "LOADER28_PASSWORD")
 	if err != nil {
 		app.errorLog.Println(err)
 		return
 	}
-	debug, _ := initArgs("--debug", "DOWNLOADER1C_PASSWORD")
+	debug, _ := initArgs("--debug", "LOADER28_PASSWORD")
 	println(
 		"user:", user,
 		"password:", password,
@@ -80,7 +80,7 @@ func getArgs(a1 string) (string, error) {
 	return "", errors.New("Не найдено флага " + a1)
 }
 func (app *application) help_home() {
-	fmt.Println(`Приложение: downloader1c\n
+	fmt.Println(`Приложение: loader28\n
     Загрузка дистрибутивов с сайта releases.1c.ru
 	
 Строка запуска: parser1c [КОМАНДА] [ОПЦИИ]
@@ -95,6 +95,6 @@ func (app *application) help_home() {
     --password - пароль PostgreSQL (либо env PG_PASSWORD)
 
 Пример запуска:
-    ./downloader1c list --user=user1c --password=pass1c
-    ./downloader1c get --user=user1c --password=pass1c`)
+    ./loader28 list --user=user1c --password=pass1c
+    ./loader28 get --user=user1c --password=pass1c`)
 }
