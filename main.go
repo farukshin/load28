@@ -15,6 +15,7 @@ type application struct {
 	login                   string       `json:"login"`
 	pwd                     string       `json:"pwd"`
 	soft                    string       `json:"soft"`
+	release                 string       `json:"release"`
 	hideUnavailablePrograms bool         `json:"hideUnavailablePrograms"`
 }
 

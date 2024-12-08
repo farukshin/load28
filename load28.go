@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 func (app *application) list() {
@@ -23,11 +24,37 @@ func (app *application) list() {
 	}
 
 	if app.soft == "" {
-		app.releases_home()
+		app.releases_page()
+	} else if app.release == "" {
+		app.soft_page()
 	}
 }
 
-func (app *application) releases_home() {
+func (app *application) soft_page() {
+	url := fmt.Sprintf("https://releases.1c.ru/project/%s", app.soft)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+	resp, err := app.client.Do(req)
+	defer resp.Body.Close()
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+	b, _ := ioutil.ReadAll(resp.Body)
+	bb := string(strings.Replace(string(b), "\n", "", -1))
+	bb = string(strings.Replace(bb, "  ", "", -1))
+	bb = string(strings.Replace(bb, "\t", "", -1))
+
+	reg := fmt.Sprintf(`<a href="/version_files\?nick=%s&ver=(\S*)">(\S*)</a>`, app.soft)
+	r := regexp.MustCompile(reg)
+	matches := r.FindAllStringSubmatch(bb, -1)
+	for _, v := range matches {
+		fmt.Printf("%s=%s\n", v[1], v[2])
+	}
+}
+
+func (app *application) releases_page() {
 	url := "https://releases.1c.ru/"
 	if app.hideUnavailablePrograms {
 		url += "?hideUnavailablePrograms=true"

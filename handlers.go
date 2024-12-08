@@ -51,6 +51,11 @@ func (app *application) init() {
 	if err == nil && hideUnavailablePrograms == "true" {
 		app.hideUnavailablePrograms = true
 	}
+
+	soft, err := getArgs("--soft")
+	if err == nil && soft != "" {
+		app.soft = soft
+	}
 }
 
 func (app *application) run() {

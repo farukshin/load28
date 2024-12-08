@@ -116,10 +116,7 @@ docker images | grep "farukshin/load28"
 export LOAD28_USER=myuser
 export LOAD28_PWD=mypassword
 ./load28 list | head -n 10
-```
 
-Результат:
-```
 DevelopmentTools10=1C:Enterprise Development Tools
 Executor=1C:Исполнитель
 Analytics=1С:Аналитика
@@ -130,6 +127,18 @@ CollaborationSystem=1С:Сервер взаимодействия
 STest=1С:Сценарное тестирование 8
 Tester=1С:Тестировщик
 esb=1С:Шина
+```
+
+Вывод доступных версий платформы 8.3:
+
+```
+./load28 list --soft=Platform83 | head -n 5
+
+8.3.25.1501=8.3.25.1501
+8.3.26.1498=8.3.26.1498
+8.3.24.1761=8.3.24.1761
+8.3.24.1758=8.3.24.1758
+8.3.24.1738=8.3.24.1738
 ```
 
 <a name="rundocker"></a> 
