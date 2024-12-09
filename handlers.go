@@ -67,6 +67,11 @@ func (app *application) init() {
 		app.filter = filter
 	}
 
+	debug, err := getArgs("--debug")
+	if err == nil && (debug == "1" || debug == "true") {
+		app.debug = true
+	}
+
 	app.urlReleases = "https://releases.1c.ru"
 	app.urlLogin = "https://login.1c.ru"
 }
@@ -114,7 +119,7 @@ func getArgs(a1 string) (string, error) {
 			if s[i] == '=' && i > 0 {
 				v := s[:i]
 				if v == a1 {
-					return s[i+1:], nil
+					return trimkov(s[i+1:]), nil
 				}
 			}
 		}
@@ -122,6 +127,18 @@ func getArgs(a1 string) (string, error) {
 	}
 	return "", errors.New("Не найдено флага " + a1)
 }
+
+func trimkov(s string) string {
+
+	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+		return s[1 : len(s)-1]
+	}
+	if len(s) >= 4 && s[0] == '\\' && s[1] == '"' && s[len(s)-1] == '"' && s[len(s)-2] == '\\' {
+		return s[2 : len(s)-2]
+	}
+	return s
+}
+
 func (app *application) help_home() {
 	fmt.Println(`Приложение: load28\n
     Загрузка дистрибутивов с сайта releases.1c.ru
@@ -136,8 +153,14 @@ func (app *application) help_home() {
     -v --version - версия приложения
     --login - пользователь портала releases.1c.ru (либо env LOAD28_USER)
     --pwd - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
+	--soft - наименование продукта (пример: Platform83)
+	--release - версия продукта (пример: 8.3.14.1855)
+	--filter - фильтр поиска (регулярное выражение)
+	--debug - режим отладки (для включения укажите 1 или true)
 
 Пример запуска:
-    ./load28 list --user=user1c --password=pass1c
-    ./load28 get --user=user1c --password=pass1c`)
+	export LOAD28_USER=user1c
+	export LOAD28_PWD=pass1c
+    ./load28 list
+    ./load28 get --soft=Platform83 --release=8.3.26.1498 --filter="Сервер.*ARM.*RPM.*Linux" --debug=1`)
 }

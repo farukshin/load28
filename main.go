@@ -20,10 +20,11 @@ type application struct {
 	hideUnavailablePrograms bool         `json:"hideUnavailablePrograms"`
 	urlReleases             string       `json:"urlReleases"`
 	urlLogin                string       `json:"urlLogin"`
+	debug                   bool         `json:"debug"`
 }
 
 var app = &application{
-	version: "v0.1.0",
+	version: "v0.1.1",
 }
 
 func main() {
