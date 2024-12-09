@@ -56,6 +56,19 @@ func (app *application) init() {
 	if err == nil && soft != "" {
 		app.soft = soft
 	}
+
+	release, err := getArgs("--release")
+	if err == nil && release != "" {
+		app.release = release
+	}
+
+	filter, err := getArgs("--filter")
+	if err == nil && filter != "" {
+		app.filter = filter
+	}
+
+	app.urlReleases = "https://releases.1c.ru"
+	app.urlLogin = "https://login.1c.ru"
 }
 
 func (app *application) run() {
@@ -75,10 +88,6 @@ func (app *application) run() {
 	} else {
 		app.help_home()
 	}
-}
-
-func (app *application) get() {
-	fmt.Println("get")
 }
 
 func getCommand() (string, error) {

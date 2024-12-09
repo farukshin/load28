@@ -16,7 +16,10 @@ type application struct {
 	pwd                     string       `json:"pwd"`
 	soft                    string       `json:"soft"`
 	release                 string       `json:"release"`
+	filter                  string       `json:"filter"`
 	hideUnavailablePrograms bool         `json:"hideUnavailablePrograms"`
+	urlReleases             string       `json:"urlReleases"`
+	urlLogin                string       `json:"urlLogin"`
 }
 
 var app = &application{
