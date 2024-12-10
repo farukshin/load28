@@ -12,6 +12,10 @@
 * [Нашли ошибку?](#err)
 * [Лицензия](#lic)
 
+Особенности:
+* нет жесткой привязки к структуре сайта [https://releases.1c.ru/](https://releases.1c.ru/)
+* возможно скачивать не только дистрибутивы, но и опубликованные дополнительные материалы
+* гибкая настройка фильтрации кандидатов с помощью регулярных выражений
 
 <a name="install"></a> 
 
@@ -108,16 +112,16 @@ docker images | grep "farukshin/load28"
     -v --version - версия приложения
     --login - пользователь портала releases.1c.ru (либо env LOAD28_USER)
     --pwd - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
-	--soft - наименование продукта (пример: Platform83)
-	--release - версия продукта (пример: 8.3.14.1855)
-	--filter - фильтр поиска (регулярное выражение)
-	--debug - режим отладки (для включения укажите 1 или true)
+    --soft - наименование продукта (пример: Platform83)
+    --release - версия продукта (пример: 8.3.14.1855)
+    --filter - фильтр поиска (регулярное выражение)
+    --debug - режим отладки (для включения укажите 1 или true)
 
 Пример запуска:
-	export LOAD28_USER=user1c
-	export LOAD28_PWD=pass1c
+    export LOAD28_USER=user1c
+    export LOAD28_PWD=pass1c
     ./load28 list
-    ./load28 get --soft=Platform83 --release=8.3.26.1498 --filter="Сервер.*ARM.*RPM.*Linux" --debug=1`
+    ./load28 get --soft=Platform83 --release=8.3.26.1498 --filter="Сервер.*ARM.*RPM.*Linux" --debug=1
 ```
 
 Вывод списка доступных дистрибутивов:
@@ -154,8 +158,10 @@ esb=1С:Шина
 Скачать сервер 1С предприятия для Linux с подробным описанием процесса выбора релиз кандидата (флаг `debug`):
 
 ```
-./load28 get --soft=Platform83 --release=8.3.26.1498 --filter="Сервер.*ARM.*RPM.*Linux" --debug=1
-> success
+./load28 get --soft=Platform83 \
+    --release=8.3.26.1498 \
+    --filter="Сервер.*ARM.*RPM.*Linux" \
+    --debug=1
 
 ls | grep server
 > server.arm.rpm64_8.3.26.1498.zip
@@ -167,14 +173,18 @@ ls | grep server
 ./load28 list --soft=esb | head -n 1
 > 6.1.6=6.1.6
 
-./load28 get --soft=esb --release=6.1.6 --filter="Сервер.*средой разработки.*Linux"
+./load28 get --soft=esb \
+    --release=6.1.6 \
+    --filter="Сервер.*средой разработки.*Linux"
 > success
 ```
 
 Определить доступные минорные релизы платформы 8.3.25:
 
 ```
-./load28 list --soft=Platform83 --filter="8.3.25.*" | head -n 3
+./load28 list \
+    --soft=Platform83 \
+    --filter="8.3.25.*" | head -n 3
 
 8.3.25.1501=8.3.25.1501
 8.3.25.1445=8.3.25.1445

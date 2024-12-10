@@ -153,14 +153,14 @@ func (app *application) help_home() {
     -v --version - версия приложения
     --login - пользователь портала releases.1c.ru (либо env LOAD28_USER)
     --pwd - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
-	--soft - наименование продукта (пример: Platform83)
-	--release - версия продукта (пример: 8.3.14.1855)
-	--filter - фильтр поиска (регулярное выражение)
-	--debug - режим отладки (для включения укажите 1 или true)
+    --soft - наименование продукта (пример: Platform83)
+    --release - версия продукта (пример: 8.3.14.1855)
+    --filter - фильтр поиска (регулярное выражение)
+    --debug - режим отладки (для включения укажите 1 или true)
 
 Пример запуска:
-	export LOAD28_USER=user1c
-	export LOAD28_PWD=pass1c
+    export LOAD28_USER=user1c
+    export LOAD28_PWD=pass1c
     ./load28 list
     ./load28 get --soft=Platform83 --release=8.3.26.1498 --filter="Сервер.*ARM.*RPM.*Linux" --debug=1`)
 }
