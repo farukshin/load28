@@ -24,7 +24,7 @@ type application struct {
 }
 
 var app = &application{
-	version: "v0.1.1",
+	version: "v0.1.2",
 }
 
 func main() {

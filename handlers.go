@@ -33,17 +33,15 @@ func initArgs(str string, env string) (string, error) {
 	}
 	return val, nil
 }
-func (app *application) init() {
+func (app *application) init() error {
 	login, err := initArgs("--login", "LOAD28_USER")
 	if err != nil {
-		app.errorLog.Println(err)
-		return
+		return err
 	}
 	app.login = login
 	pwd, err := initArgs("--password", "LOAD28_PWD")
 	if err != nil {
-		app.errorLog.Println(err)
-		return
+		return err
 	}
 	app.pwd = pwd
 
@@ -74,11 +72,17 @@ func (app *application) init() {
 
 	app.urlReleases = "https://releases.1c.ru"
 	app.urlLogin = "https://login.1c.ru"
+
+	return nil
 }
 
 func (app *application) run() {
 
-	app.init()
+	err := app.init()
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
 
 	command, err := getCommand()
 	if err != nil {
@@ -140,7 +144,7 @@ func trimkov(s string) string {
 }
 
 func (app *application) help_home() {
-	fmt.Println(`Приложение: load28\n
+	fmt.Println(`Приложение: load28
     Загрузка дистрибутивов с сайта releases.1c.ru
 	
 Строка запуска: load28 [КОМАНДА] [ОПЦИИ]
@@ -152,7 +156,7 @@ func (app *application) help_home() {
     -h --help - вызов справки
     -v --version - версия приложения
     --login - пользователь портала releases.1c.ru (либо env LOAD28_USER)
-    --pwd - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
+    --password - пароль пользователя портала releases.1c.ru (либо env LOAD28_PWD)
     --soft - наименование продукта (пример: Platform83)
     --release - версия продукта (пример: 8.3.14.1855)
     --filter - фильтр поиска (регулярное выражение)
